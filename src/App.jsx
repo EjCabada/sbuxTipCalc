@@ -1,35 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
+import './App.css';
+import Hours from './hours.jsx';
+import Rounding from './Rounding.jsx';
+import Results from './Results.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [step, setStep] = useState(() => Number(localStorage.getItem('step')) || 1);
+  const [employeeData, setEmployeeData] = useState(() => JSON.parse(localStorage.getItem('employeeData')) || []);
+  const [totalHours, setTotalHours] = useState(() => Number(localStorage.getItem('totalHours')) || 0);
+  const [totalTips, setTotalTips] = useState(() => Number(localStorage.getItem('totalTips')) || 0);
+  const [fade, setFade] = useState(true); 
+
+  useEffect(() => {
+    localStorage.setItem('step', step);
+    localStorage.setItem('employeeData', JSON.stringify(employeeData));
+    localStorage.setItem('totalHours', totalHours);
+    localStorage.setItem('totalTips', totalTips);
+  }, [step, employeeData, totalHours, totalTips]);
+
+  const triggerStepChange = (newStep) => {
+    setFade(false); 
+    setTimeout(() => {
+      setStep(newStep); 
+      setFade(true); 
+    }, 300); 
+  };
+
+  const handleDoneInHours = (data, hours) => {
+    setEmployeeData(data);
+    setTotalHours(hours);
+    triggerStepChange(2); // Smooth transition to Step 2
+  };
+
+  const handleDoneInRounding = (data, tips) => {
+    setEmployeeData(data);
+    setTotalTips(tips);
+    triggerStepChange(3); // Smooth transition to Step 3
+  };
+
+  const handleRestart = () => {
+    setStep(1);
+    setEmployeeData([]);
+    setTotalHours(0);
+    setTotalTips(0);
+    localStorage.clear();
+    triggerStepChange(1); // Restart to Step 1 with animation
+  };
+
+  const handleReturnToRounding = () => {
+    triggerStepChange(2); // Smooth transition back to Step 2
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+
+    <div id="mainContainer">
+    <div id="app" className={`fade ${fade ? 'show' : ''}`}>
+      <h1>TIP CALCULATOR</h1>
+
+      {step === 1 && (
+        <Hours
+          onDone={handleDoneInHours}
+          onRestart={handleRestart}
+          initialData={employeeData}
+          initialTotalHours={totalHours}
+        />
+      )}
+      {step === 2 && <Rounding employeeData={employeeData} onDone={handleDoneInRounding} />}
+      {step === 3 && (
+        <Results
+          employeeData={employeeData}
+          totalHours={totalHours}
+          totalTips={totalTips}
+          onRestart={handleRestart}
+          onReturnToRounding={handleReturnToRounding}
+        />
+      )}
+    </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
