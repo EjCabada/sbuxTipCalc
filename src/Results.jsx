@@ -54,7 +54,7 @@ function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRou
         <p><strong>Total Exact Tips Entered:</strong> ${totalTips.toFixed(2)}</p>
         <p><strong>Total Tips Distributed (Rounded):</strong> ${roundedTotalTips.toFixed(2)}</p>
          {/* Check for roundedTotalHours being non-zero before dividing */}
-        <p><strong>Effective Tips per Hour (Distributed/Hrs):</strong> ${(roundedTotalHours > 0 ? roundedTotalTips / roundedTotalHours : 0).toFixed(4)}</p>
+        <p><strong>Tips per Hour:</strong> ${(roundedTotalHours > 0 ? roundedTotalTips / roundedTotalHours : 0).toFixed(4)}</p>
       </div>
 
       <h3>Partner Tips Breakdown</h3>
