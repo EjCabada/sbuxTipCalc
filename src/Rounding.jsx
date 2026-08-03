@@ -70,7 +70,7 @@ function Rounding({ employeeData, onDone }) {
       <div className='progress-name'>
       <div className={`step2 ${step >= 1 ? 'active2' : 'nonActive'}`}>Partner Hours Worked</div>
       <div className='step2'>x</div>
-        <div className={`step2 ${step >= 2 ? 'active2' : 'nonActive'}`}>Tips per Hour</div>
+        <div className={`step2 ${step >= 2 ? 'active2' : 'nonActive'}`}>Total tips counted</div>
         <div className='step2'>=</div>
         <div className={`step2 ${step >= 3 ? 'active2' : 'nonActive'}`}>Final Tips Earned</div> 
       </div>
