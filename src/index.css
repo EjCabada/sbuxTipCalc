@@ -1,0 +1,31 @@
+:root {
+  --sbuxgreen: #016241;
+  --sbuxbrightgreen: #007549;
+  --sbuxdarkgreen: #1E3932;
+  --sbuxlightgreen:   #D4E9E2;
+  --sbuxcream: #F2F0EB;
+
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+  color: black;
+  background-color: var(--sbuxgreen);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
