@@ -605,29 +605,78 @@ input {
 }
 
 .numpad {
-  margin: auto;
-  margin-bottom: 1em;
-  padding: .5em;
-  width: fit-content;
+  margin: 0 auto 1em auto;
+  padding: 0.75em;
+  width: 100%;
+  max-width: 800px; /* Stops growing once the screen exceeds 800px */
+  box-sizing: border-box; /* Ensures padding doesn't overflow container width */
   background-color: gainsboro;
   box-shadow: rgba(99, 99, 101, 0.285) 0px 4px 8px 0px;
   border-radius: 10px;
 }
 
+.numpad-row {
+  display: flex;
+  gap: 0.5em;
+  margin-bottom: 0.5em;
+  width: 100%;
+}
+
+.numpad-row:last-child {
+  margin-bottom: 0;
+}
+
 .numpad button {
-  font-size: 1em;
-  min-width: 6em;
+  flex: 1; /* Distributes available width evenly among buttons in the row */
+  font-size: 1.2em;
   min-height: 4em;
-  padding: 2em 3.5em;
-  margin: .5em;
+  padding: 1em 0; /* Valid padding syntax: vertical horizontal */
+  margin: 0; /* Remove old margins, handled by flex gap */
+  border-radius: 6px;
+  background-color: var(--gold);
+  color: white;
 }
 
 #enterBtn {
-  margin: .5;
-  width: 95%;
+  width: 100%;
+  margin: 0;
 }
 
 /* Example CSS */
 .top-earner-rank {
   color: red;
+}
+
+@media (max-width: 600px) {
+  #root {
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  #mainContainer {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .numpad {
+    /* width: 100vw; */
+    width: 100%;
+    max-width: 100vw;
+    border-radius: 12px; /* Removes side curves so it spans completely flat edge-to-edge */
+    margin: 0;
+  }
+
+    i.numpad-row {
+
+    }
+  
+  .numpad button {
+    border-radius: 4px; /* Slightly tighter rounding for edge-to-edge buttons */
+    flex: 1;
+  }
 }
