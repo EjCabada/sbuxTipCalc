@@ -647,6 +647,90 @@ input {
   color: red;
 }
 
+/* Bottom Action Button Area */
+.bottomButtonArea {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  width: 100%;
+  max-width: 800px;
+  margin: 1em auto 0 auto;
+}
+
+.bottomButtonRow {
+  display: flex;
+  gap: 0.5em;
+  width: 100%;
+}
+
+.bottomButtonRow button {
+  flex: 1;
+  margin: 0;
+}
+
+.fullWidthBtn {
+  width: 100%;
+  background-color: var(--sbuxbrightgreen) !important;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+/* Previous Partner Visual Badge */
+.previousPartnerBadge {
+  background-color: var(--sbuxcream);
+  color: black;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  font-size: 0.9em;
+  margin-bottom: 0.5em;
+}
+
+/* Input Highlight on Back/Edit */
+.hours-display-input.highlighted-input {
+  background-color: #ffeeba;
+  border: 2px solid var(--gold);
+}
+
+/* Modal Overlay & Card */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background-color: white;
+  color: black;
+  padding: 2em;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 85%;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1em;
+  margin-top: 1.5em;
+}
+
+.modal-confirm-btn {
+  background-color: #d9534f !important;
+}
+
+.modal-cancel-btn {
+  background-color: #6c757d !important;
+}
+////////////////////////////////////////////////
+
 @media (max-width: 600px) {
   #root {
     padding: 0;
@@ -680,3 +764,5 @@ input {
     flex: 1;
   }
 }
+
+
