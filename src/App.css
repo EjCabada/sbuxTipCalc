@@ -307,6 +307,175 @@
   font-family: 'SoDo Sans' ,Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
+/* --- Light / Dark Theme Variables --- */
+:root, [data-theme='dark'] {
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --text-color: #ffffff;
+  --subtext-color: #cccccc;
+  --table-header-bg: #2d2d2d;
+  --row-group-a-bg: #242424;
+  --row-group-b-bg: #181818;
+  --border-color: #333333;
+  --input-bg: #f2f0eb;
+  --input-text: #000000;
+}
+
+[data-theme='light'] {
+  --bg-color: #016241;
+  --card-bg: #ffffff;
+  --text-color: #000000;
+  --subtext-color: #444444;
+  --table-header-bg: #dedede;
+  --row-group-a-bg: #ffffff;
+  --row-group-b-bg: #f2f2f2;
+  --border-color: #dddddd;
+  --input-bg: #f2f0eb;
+  --input-text: #000000;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+#mainContainer {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 12px;
+  padding: 1.5em;
+}
+
+/* --- Top Navigation Bar --- */
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.theme-toggle-btn, .hamburger-btn {
+  background-color: var(--sbuxdarkgreen) !important;
+  color: white !important;
+  font-weight: bold;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  margin: 0 !important;
+}
+
+/* --- Slide-Out Drawer & Overlay --- */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 3000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer-content {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  width: 85%;
+  max-width: 320px;
+  height: 100%;
+  padding: 1.5em;
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5em;
+}
+
+.drawer-close-btn {
+  background: none !important;
+  color: var(--text-color) !important;
+  font-size: 1.4em;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.drawer-section {
+  margin-top: 1.5em;
+  text-align: left;
+}
+
+.drawer-section h4 {
+  margin-bottom: 0.5em;
+  color: var(--gold);
+}
+
+.step-nav-list, .history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.step-nav-item, .history-item {
+  padding: 0.7em;
+  border-radius: 6px;
+  margin-bottom: 0.4em;
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+.step-nav-item.active-step {
+  background-color: var(--sbuxbrightgreen);
+  color: white;
+  font-weight: bold;
+}
+
+.active-badge {
+  font-size: 0.75em;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.2em 0.5em;
+  border-radius: 4px;
+}
+
+.history-item {
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--border-color);
+}
+
+.history-date {
+  font-weight: bold;
+  font-size: 0.85em;
+}
+
+.history-summary {
+  font-size: 0.8em;
+  color: var(--subtext-color);
+}
+
+.github-link-btn, .mode-toggle-action-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.8em;
+  border-radius: 8px;
+  background-color: var(--sbuxdarkgreen);
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
 body {
   color: white;
   background: rgb(0,88,58);
@@ -654,13 +823,13 @@ table tbody tr {
 }
 
 table tbody tr.row-group-a {
-  background-color: #2a2a2a !important;
-  color: white !important;
+  background-color: var(--row-group-a-bg) !important;
+  color: var(--text-color) !important;
 }
 
 table tbody tr.row-group-b {
-  background-color: #1a1a1a !important;
-  color: white !important;
+  background-color: var(--row-group-b-bg) !important;
+  color: var(--text-color) !important;
 }
 
 table tbody tr:hover {
@@ -672,10 +841,10 @@ table tr:nth-child(2n) {
   background-color: inherit;
 }
 
-/* --- Search Input Bar Styling --- */
+/* --- Search Bar Mobile Viewport Constraints --- */
 .search-bar-container {
-  width: 100%;
-  max-width: 800px;
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto 1em auto;
 }
 
@@ -683,10 +852,10 @@ table tr:nth-child(2n) {
   width: 100%;
   padding: 0.8em 1em;
   border-radius: 8px;
-  border: 1px solid var(--gold);
-  font-size: 1em;
-  background-color: var(--sbuxcream);
-  color: black;
+  border: 2px solid var(--gold);
+  font-size: 16px !important; /* Locks iOS Safari from zoom/jumping */
+  background-color: var(--input-bg);
+  color: var(--input-text);
   box-sizing: border-box;
 }
 
@@ -819,6 +988,19 @@ table tr:nth-child(2n) {
   justify-content: flex-end;
   gap: 1em;
   margin-top: 1.5em;
+}
+
+/* --- Unadded Modal Actions --- */
+.modal-actions-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+  margin-top: 1em;
+}
+
+.modal-actions-vertical button {
+  width: 100%;
+  margin: 0 !important;
 }
 
 .modal-confirm-btn {
@@ -1041,6 +1223,17 @@ table tr:nth-child(2n) {
   box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
   width: 100%;
   max-width: 500px;
+}
+
+.report-text-view pre {
+  text-align: left;
+  background: #111;
+  color: #00ff66;
+  padding: 1em;
+  border-radius: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+  font-size: 0.75em;
 }
 
 //////////////////////////////////////

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import Navbar from './Navbar.jsx';
 import Hours from './hours.jsx';
 import Summary from './Summary.jsx';
 import TipCounter from './TipCounter.jsx';
@@ -12,8 +13,14 @@ function App() {
   const [totalHours, setTotalHours] = useState(() => Number(localStorage.getItem('totalHours')) || 0);
   const [totalTips, setTotalTips] = useState(() => Number(localStorage.getItem('totalTips')) || 0);
   const [roundingSettings, setRoundingSettings] = useState(() => JSON.parse(localStorage.getItem('roundingSettings')) || {});
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [editingPartnerIndex, setEditingPartnerIndex] = useState(null);
   const [fade, setFade] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     localStorage.setItem('step', step);
@@ -22,6 +29,10 @@ function App() {
     localStorage.setItem('totalTips', totalTips);
     localStorage.setItem('roundingSettings', JSON.stringify(roundingSettings));
   }, [step, employeeData, totalHours, totalTips, roundingSettings]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const triggerStepChange = (newStep) => {
     setFade(false);
@@ -76,12 +87,15 @@ function App() {
     triggerStepChange(1);
   };
 
-  const handleReturnToRounding = () => triggerStepChange(4);
-  const handleReturnToTipCounter = () => triggerStepChange(3);
-  const handleReturnToEdit = () => triggerStepChange(2);
-
   return (
     <div id="mainContainer">
+      <Navbar
+        currentStep={step}
+        onNavigateStep={triggerStepChange}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
+
       <div id="app" className={`fade ${fade ? 'show' : ''}`}>
         <h1>TIP CALCULATOR</h1>
 
@@ -116,7 +130,7 @@ function App() {
             employeeData={employeeData}
             totalTips={totalTips}
             onDone={handleDoneInRounding}
-            onReturnToTipCounter={handleReturnToTipCounter}
+            onReturnToTipCounter={() => triggerStepChange(3)}
           />
         )}
 
@@ -127,9 +141,9 @@ function App() {
             totalTips={totalTips}
             roundingSettings={roundingSettings}
             onRestart={handleRestart}
-            onReturnToRounding={handleReturnToRounding}
-            onReturnToTipCounter={handleReturnToTipCounter}
-            onReturnToEdit={handleReturnToEdit}
+            onReturnToRounding={() => triggerStepChange(4)}
+            onReturnToTipCounter={() => triggerStepChange(3)}
+            onReturnToEdit={() => triggerStepChange(2)}
           />
         )}
       </div>

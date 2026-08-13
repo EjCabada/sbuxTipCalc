@@ -72,8 +72,7 @@ function Results({
     return ranks;
   }, [validEmployeeData]);
 
-  // Export Full Summary to Text File
-  const handleExportTextSummary = () => {
+  const generateReportText = () => {
     const savedTallies = JSON.parse(localStorage.getItem('tipTallies')) || {};
     const savedSettings = roundingSettings.hoursRounding
       ? roundingSettings
@@ -128,8 +127,31 @@ function Results({
     });
 
     textContent += `==========================================\n`;
+    return textContent;
+  };
 
-    // Trigger Browser Text File Download
+  // Automatically save to past history on load
+  useEffect(() => {
+    if (validEmployeeData.length > 0) {
+      const formattedText = generateReportText();
+      const newReportEntry = {
+        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        totalTips,
+        totalHours: roundedTotalHours,
+        formattedText,
+      };
+
+      const existingHistory = JSON.parse(localStorage.getItem('tipHistory')) || [];
+      // Prevent duplicate instant writes
+      if (existingHistory.length === 0 || existingHistory[0].formattedText !== formattedText) {
+        const updatedHistory = [newReportEntry, ...existingHistory].slice(0, 4);
+        localStorage.setItem('tipHistory', JSON.stringify(updatedHistory));
+      }
+    }
+  }, [validEmployeeData, totalTips, roundedTotalHours]);
+
+  const handleExportTextSummary = () => {
+    const textContent = generateReportText();
     const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -160,10 +182,11 @@ function Results({
 
       <h3>Partner Tips Breakdown</h3>
 
-      {/* Sticky Top Search Container with iOS Keyboard Jump Mitigation */}
-      <div className="sticky-search-wrapper">
+      {/* Single Search Bar (No Form Tag to prevent iOS Assistant Bar) */}
+      <div className="search-bar-container">
         <input
-          type="text"
+          type="search"
+          enterKeyHint="search"
           className="search-input"
           placeholder="Search partner name or number..."
           value={searchTerm}
@@ -216,7 +239,6 @@ function Results({
         </table>
       </div>
 
-      {/* Save Summary as Text File Button */}
       <div style={{ marginTop: '1.5em', marginBottom: '1em' }}>
         <button onClick={handleExportTextSummary} className="save-summary-btn">
           📥 Save Summary as Text File

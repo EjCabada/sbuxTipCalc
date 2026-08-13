@@ -22,6 +22,10 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
   const [inputValues, setInputValues] = useState({});
   const [editingChunk, setEditingChunk] = useState(null);
 
+  // Modal State for Unadded Currency Warning
+  const [unaddedWarningList, setUnaddedWarningList] = useState([]);
+  const [showUnaddedModal, setShowUnaddedModal] = useState(false);
+
   useEffect(() => {
     localStorage.setItem('tipTallies', JSON.stringify(tallies));
   }, [tallies]);
@@ -80,9 +84,56 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
     setEditingChunk(null);
   };
 
-  const handleConfirm = () => {
-    localStorage.setItem('totalTips', JSON.stringify(overallTotal));
-    onConfirmTally(overallTotal);
+  // Check for typed numbers that haven't been added yet
+  const handleConfirmAttempt = () => {
+    const unadded = [];
+
+    DENOMINATIONS.forEach((denom) => {
+      const raw = inputValues[denom.id];
+      if (raw && raw.trim() !== '') {
+        const val = parseFloat(raw);
+        if (!isNaN(val) && val > 0) {
+          unadded.push({ denom, val });
+        }
+      }
+    });
+
+    if (unadded.length > 0) {
+      setUnaddedWarningList(unadded);
+      setShowUnaddedModal(true);
+    } else {
+      finalizeTally(tallies);
+    }
+  };
+
+  const autoAddAndContinue = () => {
+    let updatedTallies = { ...tallies };
+
+    unaddedWarningList.forEach(({ denom, val }) => {
+      const newChunk = { id: Date.now().toString() + Math.random(), amount: val };
+      updatedTallies[denom.id] = [...(updatedTallies[denom.id] || []), newChunk];
+    });
+
+    setTallies(updatedTallies);
+    setInputValues({});
+    setShowUnaddedModal(false);
+    finalizeTally(updatedTallies);
+  };
+
+  const discardUnaddedAndContinue = () => {
+    setInputValues({});
+    setShowUnaddedModal(false);
+    finalizeTally(tallies);
+  };
+
+  const finalizeTally = (finalTalliesObj) => {
+    const calculatedTotal = Object.entries(finalTalliesObj).reduce((totalSum, [_, chunks]) => {
+      if (!Array.isArray(chunks)) return totalSum;
+      return totalSum + chunks.reduce((sum, chunk) => sum + (parseFloat(chunk.amount) || 0), 0);
+    }, 0);
+
+    localStorage.setItem('totalTips', JSON.stringify(calculatedTotal));
+    onConfirmTally(calculatedTotal);
   };
 
   return (
@@ -155,7 +206,7 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
                 </div>
               )}
 
-              {/* Add Chunk Input with iOS Numpad */}
+              {/* Add Chunk Input with Clean iOS Numeric Keypad */}
               <div className="add-chunk-row">
                 <input
                   type="number"
@@ -180,10 +231,39 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
         <button onClick={onBackToSummary} style={{ backgroundColor: '#6c757d' }}>
           Back to Summary
         </button>
-        <button onClick={handleConfirm} style={{ backgroundColor: 'var(--sbuxbrightgreen)' }}>
+        <button onClick={handleConfirmAttempt} style={{ backgroundColor: 'var(--sbuxbrightgreen)' }}>
           Confirm Tally & Continue
         </button>
       </div>
+
+      {/* Unadded Currency Warning Modal */}
+      {showUnaddedModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3 className="warning-modal-header">⚠️ Unadded Currency Detected</h3>
+            <p>You have typed numbers that were not added to the tally list:</p>
+            <ul style={{ textAlign: 'left', paddingLeft: '1.2em' }}>
+              {unaddedWarningList.map(({ denom, val }, i) => (
+                <li key={i}>
+                  <strong>{denom.label}</strong>: ${val.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+            <p>What would you like to do before continuing?</p>
+            <div className="modal-actions-vertical">
+              <button onClick={autoAddAndContinue} className="modal-confirm-btn" style={{ backgroundColor: 'var(--sbuxbrightgreen)' }}>
+                Auto-Add & Continue
+              </button>
+              <button onClick={() => setShowUnaddedModal(false)} className="modal-cancel-btn">
+                Go Back & Fix
+              </button>
+              <button onClick={discardUnaddedAndContinue} style={{ backgroundColor: '#d9534f' }}>
+                Discard & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
