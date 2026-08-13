@@ -111,6 +111,7 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import Hours from './hours.jsx';
 import Summary from './Summary.jsx';
+import TipCounter from './TipCounter.jsx';
 import Rounding from './Rounding.jsx';
 import Results from './Results.jsx';
 
@@ -141,11 +142,16 @@ function App() {
     setEmployeeData(data);
     setTotalHours(hours);
     setEditingPartnerIndex(null);
-    triggerStepChange(2);
+    triggerStepChange(2); // Step 2: Summary
   };
 
   const handleConfirmSummary = () => {
-    triggerStepChange(3);
+    triggerStepChange(3); // Step 3: Tip Tally Counter
+  };
+
+  const handleConfirmTally = (calculatedTips) => {
+    setTotalTips(calculatedTips);
+    triggerStepChange(4); // Step 4: Rounding
   };
 
   const handleEditPartnerFromSummary = (index) => {
@@ -156,11 +162,10 @@ function App() {
   const handleDoneInRounding = (data, tips) => {
     setEmployeeData(data);
     setTotalTips(tips);
-    triggerStepChange(4);
+    triggerStepChange(5); // Step 5: Results
   };
 
   const handleRestart = () => {
-    // Preserve lastSavedList and lastSavedTotalHours across restarts
     const lastSavedList = localStorage.getItem('lastSavedList');
     const lastSavedTotalHours = localStorage.getItem('lastSavedTotalHours');
 
@@ -169,7 +174,7 @@ function App() {
     setTotalHours(0);
     setTotalTips(0);
     setEditingPartnerIndex(null);
-    
+
     localStorage.clear();
 
     if (lastSavedList) localStorage.setItem('lastSavedList', lastSavedList);
@@ -178,13 +183,9 @@ function App() {
     triggerStepChange(1);
   };
 
-  const handleReturnToRounding = () => {
-    triggerStepChange(3);
-  };
-
-  const handleReturnToEdit = () => {
-    triggerStepChange(2); // Navigates back to Summary / Editing page
-  };
+  const handleReturnToRounding = () => triggerStepChange(4);
+  const handleReturnToTipCounter = () => triggerStepChange(3);
+  const handleReturnToEdit = () => triggerStepChange(2);
 
   return (
     <div id="mainContainer">
@@ -209,15 +210,31 @@ function App() {
           />
         )}
 
-        {step === 3 && <Rounding employeeData={employeeData} onDone={handleDoneInRounding} />}
+        {step === 3 && (
+          <TipCounter
+            initialTotalTips={totalTips}
+            onConfirmTally={handleConfirmTally}
+            onBackToSummary={() => triggerStepChange(2)}
+          />
+        )}
 
         {step === 4 && (
+          <Rounding
+            employeeData={employeeData}
+            totalTips={totalTips}
+            onDone={handleDoneInRounding}
+            onReturnToTipCounter={handleReturnToTipCounter}
+          />
+        )}
+
+        {step === 5 && (
           <Results
             employeeData={employeeData}
             totalHours={totalHours}
             totalTips={totalTips}
             onRestart={handleRestart}
             onReturnToRounding={handleReturnToRounding}
+            onReturnToTipCounter={handleReturnToTipCounter}
             onReturnToEdit={handleReturnToEdit}
           />
         )}

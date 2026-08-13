@@ -101,7 +101,15 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 
-function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRounding, onReturnToEdit }) {
+function Results({
+  employeeData,
+  totalHours,
+  totalTips,
+  onRestart,
+  onReturnToRounding,
+  onReturnToTipCounter,
+  onReturnToEdit,
+}) {
   const [roundedTotalTips, setRoundedTotalTips] = useState(0);
   const [roundedTotalHours, setRoundedTotalHours] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,7 +118,6 @@ function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRou
     return employeeData.filter((emp) => (emp.hoursWorked || 0) > 0);
   }, [employeeData]);
 
-  // Real-Time Search Filter
   const filteredEmployeeData = useMemo(() => {
     if (!searchTerm.trim()) return validEmployeeData;
     const term = searchTerm.toLowerCase();
@@ -154,10 +161,11 @@ function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRou
   }, [validEmployeeData]);
 
   return (
-    <div>
+    <div className="results-wrapper">
       <div style={{ display: 'flex', gap: '0.5em', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button onClick={onRestart}>Restart</button>
-        <button onClick={onReturnToEdit}>Edit Partner Inputs</button>
+        <button onClick={onReturnToEdit}>Edit Hours</button>
+        <button onClick={onReturnToTipCounter}>Adjust Tip Tally</button>
         <button onClick={onReturnToRounding}>Return to Rounding</button>
       </div>
 
@@ -171,7 +179,7 @@ function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRou
 
       <h3>Partner Tips Breakdown</h3>
 
-      {/* Real-time Search Box */}
+      {/* iPhone Keyboard Jump Prevention Search Box */}
       <div className="search-bar-container">
         <input
           type="text"
@@ -179,49 +187,54 @@ function Results({ employeeData, totalHours, totalTips, onRestart, onReturnToRou
           placeholder="Search partner name or number..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
         />
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Partner</th>
-            <th>Hrs Worked</th>
-            <th>Exact Tips</th>
-            <th>Rounded Tips</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredEmployeeData.length > 0 ? (
-            filteredEmployeeData.map((emp, index) => {
-              const rank = topEarnerRanks.get(emp.employeeNumber);
-              const displayHours = emp.adjustedHours !== null && emp.adjustedHours !== undefined ? emp.adjustedHours : emp.hoursWorked || 0;
-
-              // Exact 3-row alternating group shading
-              const rowClass = Math.floor(index / 3) % 2 === 0 ? 'row-group-a' : 'row-group-b';
-              const label = emp.name ? emp.name : `Partner ${emp.employeeNumber}`;
-
-              return (
-                <tr key={emp.employeeNumber || index} className={rowClass}>
-                  <td>
-                    {label}
-                    {rank && <span className="top-earner-rank"> ({rank})</span>}
-                  </td>
-                  <td>{displayHours.toFixed(2)}</td>
-                  <td>${(emp.exactTips || 0).toFixed(2)}</td>
-                  <td>${(emp.roundedTips || 0).toFixed(2)}</td>
-                </tr>
-              );
-            })
-          ) : (
+      {/* Fixed Minimum Height Table Shell */}
+      <div className="table-viewport-lock">
+        <table>
+          <thead>
             <tr>
-              <td colSpan="4" style={{ textAlign: 'center', color: '#888' }}>
-                No partners match "{searchTerm}"
-              </td>
+              <th>Partner</th>
+              <th>Hrs Worked</th>
+              <th>Exact Tips</th>
+              <th>Rounded Tips</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredEmployeeData.length > 0 ? (
+              filteredEmployeeData.map((emp, index) => {
+                const rank = topEarnerRanks.get(emp.employeeNumber);
+                const displayHours = emp.adjustedHours !== null && emp.adjustedHours !== undefined ? emp.adjustedHours : emp.hoursWorked || 0;
+                const rowClass = Math.floor(index / 3) % 2 === 0 ? 'row-group-a' : 'row-group-b';
+                const label = emp.name ? emp.name : `Partner ${emp.employeeNumber}`;
+
+                return (
+                  <tr key={emp.employeeNumber || index} className={rowClass}>
+                    <td>
+                      {label}
+                      {rank && <span className="top-earner-rank"> ({rank})</span>}
+                    </td>
+                    <td>{displayHours.toFixed(2)}</td>
+                    <td>${(emp.exactTips || 0).toFixed(2)}</td>
+                    <td>${(emp.roundedTips || 0).toFixed(2)}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="4" style={{ textAlign: 'center', color: '#888' }}>
+                  No partners match "{searchTerm}"
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
