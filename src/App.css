@@ -1008,6 +1008,41 @@ table tr:nth-child(2n) {
   overflow-anchor: none;
 }
 
+/* --- Sticky Search Container & iOS Fixes --- */
+.sticky-search-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: white;
+  padding: 0.5em 0;
+  margin-bottom: 0.5em;
+  scroll-margin-top: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8em 1em;
+  border-radius: 8px;
+  border: 2px solid var(--gold);
+  font-size: 16px !important; /* Prevents auto-zoom & scroll jump on iOS Safari */
+  background-color: var(--sbuxcream);
+  color: black;
+  box-sizing: border-box;
+}
+
+/* Save Summary Button */
+.save-summary-btn {
+  background-color: var(--sbuxbrightgreen) !important;
+  color: white !important;
+  font-weight: bold;
+  font-size: 1.1em !important;
+  padding: 0.9em 1.5em !important;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+  width: 100%;
+  max-width: 500px;
+}
+
 //////////////////////////////////////
 
 @media (max-width: 600px) {

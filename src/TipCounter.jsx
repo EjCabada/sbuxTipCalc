@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const DENOMINATIONS = [
-
   { id: '0.01', label: 'Pennies ($0.01)', value: 0.01 },
   { id: '0.05', label: 'Nickels ($0.05)', value: 0.05 },
   { id: '0.10', label: 'Dimes ($0.10)', value: 0.10 },
@@ -21,13 +20,12 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
   });
 
   const [inputValues, setInputValues] = useState({});
-  const [editingChunk, setEditingChunk] = useState(null); // { denomId, chunkId, val }
+  const [editingChunk, setEditingChunk] = useState(null);
 
   useEffect(() => {
     localStorage.setItem('tipTallies', JSON.stringify(tallies));
   }, [tallies]);
 
-  // Calculate overall total from all denomination chunks
   const overallTotal = Object.entries(tallies).reduce((totalSum, [_, chunks]) => {
     if (!Array.isArray(chunks)) return totalSum;
     const denomSum = chunks.reduce((sum, chunk) => sum + (parseFloat(chunk.amount) || 0), 0);
@@ -61,8 +59,8 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
     }));
   };
 
-  const handleStartEditChunk = (denomId, chunk) => {
-    setEditingChunk({ denomId, chunkId: chunk.id, val: String(chunk.amount) });
+  const handleStartEditChunk = (denom, chunk) => {
+    setEditingChunk({ denomId: denom.id, chunkId: chunk.id, val: String(chunk.amount) });
   };
 
   const handleSaveEditChunk = () => {
@@ -110,7 +108,7 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
                 <span className="denom-total">${denomTotal.toFixed(2)}</span>
               </div>
 
-              {/* Existing Chunks List */}
+              {/* Chunks List */}
               {denomChunks.length > 0 && (
                 <div className="chunk-list">
                   {denomChunks.map((chunk, idx) => (
@@ -119,7 +117,8 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
                         <div className="chunk-edit-box">
                           <input
                             type="number"
-                            step="0.01"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             value={editingChunk.val}
                             onChange={(e) =>
                               setEditingChunk({ ...editingChunk, val: e.target.value })
@@ -137,7 +136,7 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
                           </span>
                           <div className="chunk-actions">
                             <button
-                              onClick={() => handleStartEditChunk(denom.id, chunk)}
+                              onClick={() => handleStartEditChunk(denom, chunk)}
                               className="chunk-btn edit"
                             >
                               Edit
@@ -156,11 +155,12 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
                 </div>
               )}
 
-              {/* Add Chunk Input */}
+              {/* Add Chunk Input with iOS Numpad */}
               <div className="add-chunk-row">
                 <input
                   type="number"
-                  step="0.01"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   placeholder="Chunk $ amount"
                   value={inputValues[denom.id] || ''}
                   onChange={(e) => handleInputChange(denom.id, e.target.value)}
@@ -178,10 +178,10 @@ function TipCounter({ onConfirmTally, onBackToSummary, initialTotalTips = 0 }) {
 
       <div className="tally-actions">
         <button onClick={onBackToSummary} style={{ backgroundColor: '#6c757d' }}>
-          Back to Hours Summary
+          Back to Summary
         </button>
         <button onClick={handleConfirm} style={{ backgroundColor: 'var(--sbuxbrightgreen)' }}>
-          Confirm Tally & Continue to Rounding
+          Confirm Tally & Continue
         </button>
       </div>
     </div>
